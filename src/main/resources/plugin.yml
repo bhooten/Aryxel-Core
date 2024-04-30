@@ -1,0 +1,4 @@
+name: PixelSMP-Core
+version: '${version}'
+main: com.pixelsmp.core.CorePlugin
+api-version: '1.20'
