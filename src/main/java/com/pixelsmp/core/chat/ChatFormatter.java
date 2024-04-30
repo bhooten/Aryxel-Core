@@ -33,4 +33,22 @@ public class ChatFormatter
                     sender + "&R &8// &7" + message);
         }
     }
+
+    /**
+     * This method formats a console (plaintext) message with the given sender and message.
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     *
+     * @since 1.0.0
+     *
+     * @param sender The sending service to present to the console; for example, "Console" or "Chat"
+     * @param message The message to send to the console
+     * @param error Whether the message is an error message
+     *
+     * @return The formatted chat message
+     */
+    public static String formatConsoleMessage(String sender, String message, boolean error)
+    {
+        return (error ? "ERROR // " : "") + sender + " // " + message;
+    }
 }
