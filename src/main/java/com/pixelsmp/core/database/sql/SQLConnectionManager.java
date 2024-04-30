@@ -22,7 +22,7 @@ public class SQLConnectionManager
     private final ExecutorService executorService;
     private volatile Connection connection;
     private HikariConfig hikariConfig = new HikariConfig();
-    private final HikariDataSource dataSource;
+    private HikariDataSource dataSource;
 
     /**
      * Initializes a new MySQLConnectionManager with the given connection parameters.
@@ -53,18 +53,31 @@ public class SQLConnectionManager
         hikariConfig.setMaximumPoolSize(10);
         hikariConfig.setConnectionTimeout(3000);
 
-        dataSource = new HikariDataSource(hikariConfig);
+        try
+        {
+            dataSource = new HikariDataSource(hikariConfig);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Connects to the database.
-     * If the connection fails, an error message is printed to the console and the server is blocked from starting.
+     * Performs a health check on the SQL connection and returns the health status.
      *
      * @author Bradley Hooten (bradleyah02@gmail.com)
      *
      * @since 1.0.0
+     *
+     * @return Boolean for health status; true = healthy, false = unhealthy
      */
     public boolean isConnectionHealthy() {
+        if(dataSource == null)
+        {
+            return false;
+        }
+
         try (Connection connection = dataSource.getConnection())
         {
             // Check if connection is healthy
