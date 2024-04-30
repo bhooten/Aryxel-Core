@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 group = 'com.pixelsmp'
@@ -19,6 +20,13 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
+    compileOnly "com.zaxxer:HikariCP:4.0.3"
+}
+
+shadowJar {
+    dependencies {
+        include dependency("com.zaxxer:HikariCP:4.0.3")
+    }
 }
 
 def targetJavaVersion = 17
