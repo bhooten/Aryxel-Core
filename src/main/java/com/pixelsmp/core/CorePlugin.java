@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public final class CorePlugin extends JavaPlugin {
-    private SQLConnectionManager sqlConnectionManager;
+    private static SQLConnectionManager sqlConnectionManager;
 
     @Override
     public void onEnable() {
@@ -40,7 +40,10 @@ public final class CorePlugin extends JavaPlugin {
                 config.getString("mysql.username"),
                 config.getString("mysql.password"),
                 config.getString("mysql.database"),
-                config.getInt("mysql.port")
+                config.getInt("mysql.port"),
+                config.getInt("hikaricp.maximumPoolSize"),
+                config.getLong("hikaricp.timeoutMillis"),
+                config.getInt("threading.sql.maximumPoolSize")
         );
 
         // Verify the connection
@@ -77,5 +80,18 @@ public final class CorePlugin extends JavaPlugin {
         // Send a successful shutdown notice
         Bukkit.getLogger().info(ChatFormatter.formatChatMessage("Plugin Manager",
                 "PixelSMP Core has been successfully deinitialized!", false));
+    }
+
+    /**
+     * Returns the SQL Connection Orchestrator.
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     *
+     * @since 1.0.0
+     *
+     * @return SQL Connection Orchestrator instance
+     */
+    public static SQLConnectionManager getSQLConnectionManager() {
+        return sqlConnectionManager;
     }
 }

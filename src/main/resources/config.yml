@@ -1,5 +1,16 @@
+#### PixelSMP Configuration File
+# Maintained by bhooten and the PixelSMP team
+
+# MySQL Settings
 mysql.host: 127.0.0.1
 mysql.port: 3306
 mysql.database: pixelsmp
 mysql.username: dbuser
 mysql.password: password
+
+# HikariCP Connection Pooling Settings
+hikaricp.maximumPoolSize: 5
+hikaricp.timeoutMillis: 5000
+
+# SQL Async Thread Pool Settings
+threading.sql.maximumPoolSize: 10
