@@ -1,7 +1,12 @@
 package com.pixelsmp.core;
 
 import com.pixelsmp.core.chat.ChatFormatter;
+import com.pixelsmp.core.command.permissions.SetRankCommand;
 import com.pixelsmp.core.database.sql.SQLConnectionManager;
+import com.pixelsmp.core.listener.ChatEventListener;
+import com.pixelsmp.core.listener.PlayerJoinListener;
+import com.pixelsmp.core.listener.PlayerLeaveListener;
+import com.pixelsmp.core.permissions.PermissionOrchestrator;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,10 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public final class CorePlugin extends JavaPlugin {
+    private static CorePlugin instance;
     private static SQLConnectionManager sqlConnectionManager;
+    private static PermissionOrchestrator permissionOrchestrator;
 
     @Override
     public void onEnable() {
+        instance = this;
+
         Bukkit.getLogger().info(ChatFormatter.formatConsoleMessage("Plugin Manager",
                 "Beginning initialization of PixelSMP Core...", false));
 
@@ -60,6 +69,16 @@ public final class CorePlugin extends JavaPlugin {
         Bukkit.getLogger().info(ChatFormatter.formatConsoleMessage("Core", "Database connection " +
                 "initialized successfully!", false));
 
+        permissionOrchestrator = new PermissionOrchestrator();
+
+        // Register Event Listeners
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new ChatEventListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerLeaveListener(), this);
+
+        // Register Commands
+        getCommand("setrank").setExecutor(new SetRankCommand());
+
         // As of right now, that's all we have! We'll add more features later.
         // Send a successful startup notice
         Bukkit.getLogger().info(ChatFormatter.formatConsoleMessage("Plugin Manager",
@@ -93,5 +112,32 @@ public final class CorePlugin extends JavaPlugin {
      */
     public static SQLConnectionManager getSQLConnectionManager() {
         return sqlConnectionManager;
+    }
+
+    /**
+     * Returns the Permission Orchestrator instance.
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     *
+     * @since 1.1.0
+     *
+     * @return Permission Orchestrator instance
+     */
+    public static PermissionOrchestrator getPermissionOrchestrator()
+    {
+        return permissionOrchestrator;
+    }
+
+    /**
+     * Returns the Core Plugin instance.
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     *
+     * @since 1.1.0
+     *
+     * @return Core Plugin instance
+     */
+    public static CorePlugin getInstance() {
+        return instance;
     }
 }
