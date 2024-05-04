@@ -1,4 +1,7 @@
 name: PixelSMP-Core
-version: '${version}'
+version: '1.1.0'
 main: com.pixelsmp.core.CorePlugin
 api-version: '1.20'
+commands:
+  setrank:
+    description: Sets a player's rank.
