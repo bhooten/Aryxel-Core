@@ -29,34 +29,42 @@ public class PermissionOrchestrator
                         "CREATE TABLE IF NOT EXISTS core_permissions (player_uuid VARCHAR(36) PRIMARY KEY, rank VARCHAR(16) NOT NULL DEFAULT 'MEMBER');")
                 .thenCompose(result ->
                 {
-                    // Build the SQL statement to fetch all player UUIDs
-                    StringBuilder baseQuery = new StringBuilder("SELECT * FROM core_permissions WHERE player_uuid IN (");
+                    UUID[] onlinePlayerUUIDs = Bukkit.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).toArray(UUID[]::new);
 
-                    for (UUID uuid : Bukkit.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).toArray(UUID[]::new))
+                    // Seed the player ranks, if any are online
+                    if(onlinePlayerUUIDs.length != 0)
                     {
-                        baseQuery.append("'").append(uuid.toString()).append("',");
-                    }
+                        // Build the SQL statement to fetch all player UUIDs
+                        StringBuilder baseQuery = new StringBuilder("SELECT * FROM core_permissions WHERE player_uuid IN (");
 
-                    baseQuery.delete(baseQuery.length() - 1, baseQuery.length()).append(");");
-
-                    return CorePlugin.getSQLConnectionManager().executeQueryAsync(baseQuery.toString(), rs ->
-                    {
-                        // Iterate through the ResultSet to seed the in-memory value store
-                        while (rs.next())
+                        for (UUID uuid : onlinePlayerUUIDs)
                         {
-                            PermissionRank rank = PermissionRank.valueOf(rs.getString("rank"));
-
-                            _playerPermissions.put(UUID.fromString(rs.getString("player_uuid")), rank);
+                            baseQuery.append("'").append(uuid.toString()).append("',");
                         }
 
-                        Bukkit.getServer().getLogger()
-                                .info(ChatFormatter.formatConsoleMessage("Core", "Successfully seeded player rank data.", false));
+                        baseQuery.delete(baseQuery.length() - 1, baseQuery.length()).append(");");
 
-                        return null;
-                    });
+                        return CorePlugin.getSQLConnectionManager().executeQueryAsync(baseQuery.toString(), rs ->
+                        {
+                            // Iterate through the ResultSet to seed the in-memory value store
+                            while (rs.next())
+                            {
+                                PermissionRank rank = PermissionRank.valueOf(rs.getString("rank"));
+
+                                _playerPermissions.put(UUID.fromString(rs.getString("player_uuid")), rank);
+                            }
+
+                            Bukkit.getServer().getLogger()
+                                    .info(ChatFormatter.formatConsoleMessage("Core", "Successfully seeded player rank data.", false));
+
+                            return null;
+                        });
+                    }
+
+                    return CompletableFuture.completedFuture(null);
                 }).exceptionally(ex ->
                 {
-                    Bukkit.getLogger().severe(ChatFormatter.formatConsoleMessage("Core", "Failed to initialized permissions.", true));
+                    Bukkit.getLogger().severe(ChatFormatter.formatConsoleMessage("Core", "Failed to initialize permissions.", true));
 
                     CorePlugin.getInstance().getPluginLoader().disablePlugin(CorePlugin.getInstance());
                     ex.printStackTrace();
