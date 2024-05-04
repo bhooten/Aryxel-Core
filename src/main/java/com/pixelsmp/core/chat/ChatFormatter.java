@@ -4,6 +4,11 @@ import org.bukkit.ChatColor;
 
 public class ChatFormatter
 {
+    public static final String NO_PERMISSIONS_ERROR = formatChatMessage("Permissions",
+            "You do not have permission to execute this command.", true);
+    public static final String UNKNOWN_ERROR = formatChatMessage("Core",
+            "We were unable to process your request due to an unknown error.", true);
+
     /**
      * This method formats a chat message with the given sender and message.
      *
@@ -50,5 +55,19 @@ public class ChatFormatter
     public static String formatConsoleMessage(String sender, String message, boolean error)
     {
         return (error ? "ERROR // " : "") + sender + " // " + message;
+    }
+
+    /**
+     * This method formats a command usage message with the given command and usage.
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     *
+     * @since 1.1.0
+     *
+     * @param commandUsage The command usage to present to the player
+     */
+    public static String formatCommandUsage(String commandUsage)
+    {
+        return formatChatMessage("Command Usage", "Incorrect usage. The correct usage is: &c" + commandUsage + "&7.", true);
     }
 }
