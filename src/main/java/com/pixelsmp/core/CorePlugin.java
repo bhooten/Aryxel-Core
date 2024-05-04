@@ -97,7 +97,7 @@ public final class CorePlugin extends JavaPlugin {
         }
 
         // Send a successful shutdown notice
-        Bukkit.getLogger().info(ChatFormatter.formatChatMessage("Plugin Manager",
+        Bukkit.getLogger().info(ChatFormatter.formatConsoleMessage("Plugin Manager",
                 "PixelSMP Core has been successfully deinitialized!", false));
     }
 

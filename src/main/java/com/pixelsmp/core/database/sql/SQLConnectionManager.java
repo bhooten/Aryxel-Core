@@ -78,12 +78,12 @@ public class SQLConnectionManager
             // Send a message to the console, depending on the result
             if(healthy)
             {
-                Bukkit.getLogger().fine(ChatFormatter.formatChatMessage("Database Core",
+                Bukkit.getLogger().fine(ChatFormatter.formatConsoleMessage("Database Core",
                         "Database health check returned successfully.", false));
             }
             else
             {
-                Bukkit.getLogger().warning(ChatFormatter.formatChatMessage("Database Core",
+                Bukkit.getLogger().warning(ChatFormatter.formatConsoleMessage("Database Core",
                         "Database health check failed.", true));
             }
 
@@ -120,7 +120,8 @@ public class SQLConnectionManager
         if(dataSource != null)
         {
             dataSource.close();
-            Bukkit.getLogger().info(ChatFormatter.formatChatMessage("Database Core", "Successfully closed HikariCP datasource.", false));
+            Bukkit.getLogger().info(ChatFormatter.formatConsoleMessage("Database Core",
+                    "Successfully closed HikariCP datasource.", false));
         }
     }
 
