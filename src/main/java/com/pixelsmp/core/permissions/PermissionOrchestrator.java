@@ -5,15 +5,15 @@ import com.pixelsmp.core.chat.ChatFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class PermissionOrchestrator
 {
-    private final HashMap<UUID, PermissionRank> _playerPermissions = new HashMap<>();
+    private final ConcurrentHashMap<UUID, PermissionRank> _playerPermissions = new ConcurrentHashMap<>();
 
     /**
      * Initializes a new PermissionOrchestrator.
@@ -24,6 +24,13 @@ public class PermissionOrchestrator
      */
     public PermissionOrchestrator()
     {
+        // Check to see if the orchestrator has already been initialized
+        if (CorePlugin.getPermissionOrchestrator() != null)
+        {
+            // Throw an exception if it has
+            throw new IllegalStateException("PermissionOrchestrator has already been initialized!");
+        }
+
         // Initialize the permissions table in the database
         CorePlugin.getSQLConnectionManager().executeUpdateAsync(
                         "CREATE TABLE IF NOT EXISTS core_permissions (player_uuid VARCHAR(36) PRIMARY KEY, rank VARCHAR(16) NOT NULL DEFAULT 'MEMBER');")
@@ -79,6 +86,9 @@ public class PermissionOrchestrator
      * @param playerUUID The player to fetch the rank for
      *
      * @return The player's rank, if it exists
+     *
+     * @author Bradley Hooten (bradleyah02@gmail.com)
+     * @since 1.1.0
      */
     public CompletableFuture<Optional<PermissionRank>> getPlayerRank(UUID playerUUID)
     {
